@@ -1,0 +1,83 @@
+﻿@using SiteManagement.Entity.DTOs.Sites
+@model SiteUpdateDto
+
+
+<div class="modal-header">
+    <h3 class="modal-title">Site Güncelle</h3>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="updateSiteForm" asp-area="Admin" asp-controller="Site" asp-action="Update" method="post">
+    <div class="modal-body">
+        <input type="hidden" asp-for="Id" />
+        <div class="row">
+            <div class="col-md-6">
+                <h4 class="mb-3">Site Bilgileri</h4>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name">Site Adı</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Address">Adres</label>
+                    <input asp-for="Address" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="City">Şehir</label>
+                    <input asp-for="City" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="fw-bold">Mevcut Yöneticilerden Seç</label>
+                <select asp-for="ManagerId" class="form-select" id="managerDropdown">
+                    <option value="">-- Yeni Yönetici Oluşturacağım --</option>
+                    @if (Model.Managers != null)
+                    {
+                        foreach (var manager in Model.Managers)
+                        {
+                            <option value="@manager.Id"
+                                    data-firstname="@manager.FirstName"
+                                    data-lastname="@manager.LastName"
+                                    data-email="@manager.Email">
+                                @manager.FirstName @manager.LastName (@manager.Email)
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <h5 class="text-muted">Veya Yeni Yönetici Oluştur</h5>
+
+            <div class="row">
+                <div class="col-md-6 form-group mb-2">
+                    <label asp-for="NewManager.FirstName">Ad</label>
+                    <input asp-for="NewManager.FirstName" id="inputFirstName" class="form-control" />
+                </div>
+                <div class="col-md-6 form-group mb-2">
+                    <label asp-for="NewManager.LastName">Soyad</label>
+                    <input asp-for="NewManager.LastName" id="inputLastName" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="NewManager.Email">E-Posta (Kullanıcı Adı)</label>
+                <input asp-for="NewManager.Email" id="inputEmail" type="email" class="form-control" autocomplete="off" placeholder="ornek@siteyonetim.com"/>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="NewManager.Password">Şifre</label>
+                <input asp-for="NewManager.Password" id="inputPassword" type="password" class="form-control" autocomplete="new-password" />
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+        <button type="submit" class="btn btn-primary">Değişiklikleri Kaydet</button>
+    </div>
+</form>

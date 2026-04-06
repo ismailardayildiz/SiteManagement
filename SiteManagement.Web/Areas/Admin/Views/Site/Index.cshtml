@@ -1,0 +1,180 @@
+﻿@using SiteManagement.Entity.DTOs.Sites
+@model List<SiteDto>
+
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Site Yönetimi /</span> Siteler</h4>
+
+    <!-- Basic Bootstrap Table -->
+    <div class="card">
+        <div class="table-responsive text-nowrap m-4">
+
+            @*             @{
+                @if (!User.IsInRole($"{RoleConsts.User}"))
+                {
+
+                    <a class="btn btn-success mb-3" asp-area="Admin" asp-controller="Article" asp-action="Add">
+                        Makale Ekle <i class="bx bx-plus"></i>
+                    </a>
+
+                }
+            } *@
+
+            <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSiteModal">
+                Site Ekle <i class="bx bx-plus"></i>
+            </button>
+
+            <table class="table table-bordered" id="sitesTable" width="100%" collspaceing="0">
+                <thead>
+                    <tr>
+                        <th>Site Adı</th>
+                        <th>Adres</th>
+                        <th>Şehir</th>
+                        <th>Yönetici</th>
+                        <th>Oluşturulma Tarihi</th>
+                        <th>Oluşturan</th>
+                        <th>İşlemler</th>
+                        @*                         @{
+                            @if (!User.IsInRole($"{RoleConsts.User}"))
+                            {
+                                <th>İşlemler</th>
+                            }
+                        } *@
+
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Site Adı</th>
+                        <th>Adres</th>
+                        <th>Şehir</th>
+                        <th>Yönetici</th>
+                        <th>Oluşturulma Tarihi</th>
+                        <th>Oluşturan</th>
+                        <th>İşlemler</th>
+                        @*                         @{
+                            @if (!User.IsInRole("User"))
+                            {
+                                <th>İşlemler</th>
+                            }
+                        } *@
+                    </tr>
+                </tfoot>
+                <tbody class="table-border-bottom-0">
+                    @foreach (var site in Model)
+                    {
+                        <tr name="@site.Id">
+                            <td>@site.Name</td>
+                            <td>@site.Address</td>
+                            <td>@site.City</td>
+                            <td>@site.ManagerName</td>
+                            <td>@site.CreatedDate.ToShortTimeString()</td>
+                            <td>@site.CreatedBy</td>
+
+                            <td>
+                                <button class="btn btn-primary btn-sm btn-update"
+                                        data-id="@site.Id"
+                                        data-url="@Url.Action("Update", "Site", new { area = "Admin" })">
+                                    Güncelle
+                                </button>
+                                <a class="btn btn-danger btn-sm " data-id="@site.Id" onclick="return confirm('Bu Siteyi Silmek İstediğinize Emin Misiniz?')" asp-area="Admin" asp-controller="Site" asp-action="Delete" asp-route-siteId="@site.Id"><i class="bx bx-minus-circle"></i></a>
+                            </td>
+                            @* 
+                            @{
+                                @if (!User.IsInRole($"{RoleConsts.User}"))
+                                {
+                                    <td>
+                                        <a class="btn btn-primary btn-sm " data-id="@article.Id" asp-area="Admin" asp-controller="Article" asp-action="Update" asp-route-articleId="@article.Id"><i class="bx bxs-edit"></i></a>
+                                        <a class="btn btn-danger btn-sm " data-id="@article.Id" asp-area="Admin" asp-controller="Article" asp-action="Delete" asp-route-articleId="@article.Id"><i class="bx bx-minus-circle"></i></a>
+                                    </td>
+                                }
+                            } *@
+
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--/ Basic Bootstrap Table -->
+
+</div>
+
+
+@section Scripts
+{
+    <script src="~/js/siteindex.js" type="application/ecmascript"></script>
+    <script>
+        $(document).ready(function () {
+
+            // 1. MODAL AÇMA (GET)
+            $(document).on('click', '.btn-update', function () {
+                var url = $(this).data('url');
+                var id = $(this).data('id');
+
+                $.get(url + "?id=" + id, function (data) {
+                    $('#modalContent').html(data);
+                    $('#updateSiteModal').modal('show');
+
+                    // Modal içeriği yüklendikten sonra dropdown durumunu kontrol et
+                    $('#managerDropdown').trigger('change');
+                });
+            });
+
+            // 2. DROPDOWN DEĞİŞİM MANTIĞI (Dinamik İçerik İçin Delegated Event)
+            $(document).on('change', '#managerDropdown', function () {
+                var selectedOption = $(this).find('option:selected');
+                var managerId = selectedOption.val();
+
+                if (managerId) {
+                    // Mevcut Yönetici Seçildiyse: Bilgileri doldur ve kilitle
+                    $('#inputFirstName').val(selectedOption.data('firstname')).prop('readonly', true);
+                    $('#inputLastName').val(selectedOption.data('lastname')).prop('readonly', true);
+                    $('#inputEmail').val(selectedOption.data('email')).prop('readonly', true);
+
+                    // Validasyon geçmesi için sahte veriler
+                    $('#inputPassword').val('********').prop('readonly', true);
+                    $('#inputPhone').val('0000000000').prop('readonly', true);
+                }
+                else {
+                    // Yeni Yönetici Seçildiyse: İçini temizle ve kilidi aç
+                    $('#inputFirstName').val('').prop('readonly', false);
+                    $('#inputLastName').val('').prop('readonly', false);
+                    $('#inputEmail').val('').prop('readonly', false);
+                    $('#inputPassword').val('').prop('readonly', false);
+                    $('#inputPhone').val('').prop('readonly', false);
+                }
+            });
+
+            // 3. FORM GÖNDERME (POST)
+            $(document).on('submit', '#updateSiteForm', function (e) {
+                e.preventDefault();
+                var form = $(this);
+
+                $.post(form.attr('action'), form.serialize(), function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        // Hata durumunda formu tekrar modal içine bas
+                        $('#modalContent').html(response);
+                        // Hata mesajlarıyla gelen yeni dropdown'ı tekrar tetikle
+                        $('#managerDropdown').trigger('change');
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+@await Html.PartialAsync("Add", new SiteAddDto())
+
+
+<div class="modal fade" id="updateSiteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="modalContent">
+            </div>
+        </div>
+    </div>
+</div>

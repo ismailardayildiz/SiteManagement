@@ -1,0 +1,153 @@
+﻿@using SiteManagement.Entity.DTOs.Announcements
+@model List<AnnouncementDto>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-4">
+                    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Site Yönetimi /</span> Siteler</h4>
+                </ol>
+            </nav>
+
+            <div class="bg-white rounded h-100 p-4 shadow-sm">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <button type="button" id="btnAdd" class="btn btn-success" style="background-color: #8ce35a; border: none;">
+                        <i class="fa fa-plus me-2"></i>Duyuru Ekle
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="text-uppercase small text-muted bg-light">
+                            <tr>
+                                <th scope="col" class="border-0">Duyuru Başlığı</th>
+                                <th scope="col" class="border-0">Site Adı</th>
+                                <th scope="col" class="border-0">Oluşturulma Tarihi</th>
+                                <th scope="col" class="border-0">Oluşturan</th>
+                                <th scope="col" class="border-0 text-center">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Title</td>
+                                    <td>@item.SiteName</td>
+                                    <td>@item.CreatedDate.ToString("HH:mm")</td>
+                                    <td>@item.CreatedBy</td>
+                                    <td class="text-center">
+                                        <button type="button" data-id="@item.Id" class="btn btn-primary btn-sm me-1 btnUpdate"
+                                                style="background-color: #727cf5; border: none; padding: 5px 15px;">
+                                            Güncelle
+                                        </button>
+                                        @* Mevcut silme butonu yerine bunu kullan *@
+                                        <button type="button" data-id="@item.Id" class="btn btn-danger btn-sm btnDelete"
+                                                style="background-color: #fa5c7c; border: none;">
+                                            <i class="fa fa-minus-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="text-uppercase small text-muted">
+                            <tr>
+                                <th>Duyuru Başlığı</th>
+                                <th>Site Adı</th>
+                                <th>Oluşturulma Tarihi</th>
+                                <th>Oluşturan</th>
+                                <th class="text-center">İşlemler</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Modal Container for Update *@
+<div id="modalPlaceholder" aria-hidden="true"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $('#btnAdd').click(function () {
+                $.get('/Admin/Announcement/Add').done(function (data) {
+                    $('#modalPlaceholder').html(data);
+                    $('#modalPlaceholder').find('.modal').modal('show');
+                });
+            });
+
+            $(document).on('click', '.btnUpdate', function () {
+                const id = $(this).attr('data-id');
+                $.get('/Admin/Announcement/Update/' + id).done(function (data) {
+                    $('#modalPlaceholder').html(data);
+                    $('#modalPlaceholder').find('.modal').modal('show');
+                });
+            });
+
+            $(document).on('submit', '#addAnnouncementForm, #updateAnnouncementForm', function (e) {
+                e.preventDefault();
+                const form = $(this);
+                const url = form.attr('action');
+
+                $.post(url, form.serialize()).done(function (data) {
+                    if (data.success) {
+                       
+                        $('.modal').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $('body').css('padding-right', '');
+
+                        // toastr.success("İşlem başarıyla tamamlandı.");
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+
+                        $('#modalPlaceholder').html(data);
+                        $('#modalPlaceholder').find('.modal').modal('show');
+                    }
+                });
+            });
+
+         
+        });
+
+
+
+        $(document).on('click', '.btnDelete', function () {
+            const id = $(this).attr('data-id');
+            const url = "/Admin/Announcement/Delete/" + id;
+
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu duyuru silinecek (pasife alınacak)!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#727cf5',
+                cancelButtonColor: '#fa5c7c',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Kullanıcı onayladıysa Controller'a git
+                    $.get(url).done(function (data) {
+                        // Controller'da RedirectToAction yerine Json dönersen daha şık olur
+                        Swal.fire(
+                            'Silindi!',
+                            'Duyuru başarıyla silindi.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    });
+                }
+            });
+        });
+
+    </script>
+}

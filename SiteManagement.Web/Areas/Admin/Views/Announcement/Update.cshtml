@@ -1,0 +1,47 @@
+﻿@using SiteManagement.Entity.DTOs.Announcements
+@model AnnouncementUpdateDto
+
+<div class="modal fade" id="updateAnnouncementModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Duyuru Güncelle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Update" asp-controller="Announcement" method="post" id="updateAnnouncementForm">
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    @* ID bilgisini saklıyoruz ki hangi kaydın güncelleneceği bilinsin *@
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-semibold">Duyuru Başlığı</label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-semibold">İçerik</label>
+                        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-semibold">Yayınlanacak Site</label>
+                        <select asp-for="SiteId" class="form-select"
+                                asp-items="@(new SelectList(Model.Sites, "Id", "Name"))">
+                        </select>
+                        <span asp-validation-for="SiteId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #727cf5; border: none;">
+                        Değişiklikleri Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

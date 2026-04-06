@@ -1,0 +1,63 @@
+﻿@using SiteManagement.Entity.DTOs.Sites
+@model SiteAddDto
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    @* <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Site Yönetimi /</span> Site Ekle</h4> *@
+
+    <div class="modal fade" id="addSiteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Site ve Yönetici Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-area="Admin" asp-controller="Site" asp-action="Add" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 border-end">
+                                <h6 class="mb-3 text-primary">Site Bilgileri</h6>
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="form-label">Site Adı</label>
+                                    <input asp-for="Name" class="form-control" placeholder="Site adı">
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Address" class="form-label">Adres</label>
+                                    <input asp-for="Address" class="form-control" placeholder="Adres">
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="City" class="form-label">Şehir</label>
+                                    <input asp-for="City" class="form-control" placeholder="Şehir">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-3 text-primary">Yönetici Bilgileri</h6>
+                                <div class="mb-3">
+                                    <label asp-for="Manager.FirstName" class="form-label">Ad</label>
+                                    <input asp-for="Manager.FirstName" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Manager.LastName" class="form-label">Soyad</label>
+                                    <input asp-for="Manager.LastName" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Manager.Email" class="form-label">E-Posta</label>
+                                    <input asp-for="Manager.Email" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Manager.Password" class="form-label">Parola</label>
+                                    <input asp-for="Manager.Password" type="password" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-primary">Site ve Yöneticiyi Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
