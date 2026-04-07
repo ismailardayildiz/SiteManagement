@@ -1,0 +1,33 @@
+﻿@using SiteManagement.Entity.DTOs.Blocks
+@model BlockUpdateDto
+<div class="modal fade" id="updateBlockModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Blok Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="updateBlockForm">
+                <input type="hidden" asp-for="Id" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Blok Adı</label>
+                        <input asp-for="Name" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="FloorCount" class="form-label">Kat Sayısı</label>
+                        <input asp-for="FloorCount" type="number" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SiteId" class="form-label">Site</label>
+                        <select asp-for="SiteId" class="form-select" asp-items="@(new SelectList(Model.Sites, "Id", "Name"))">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnUpdateBlock">Güncelle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

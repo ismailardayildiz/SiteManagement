@@ -2,16 +2,14 @@
 @model SiteAddDto
 
 <div class="container-xxl flex-grow-1 container-p-y">
-    @* <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Site Yönetimi /</span> Site Ekle</h4> *@
-
     <div class="modal fade" id="addSiteModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Yeni Site ve Yönetici Ekle</h5>
+                    <h5 class="modal-title">Yeni Site Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form asp-area="Admin" asp-controller="Site" asp-action="Add" method="post">
+                <form asp-area="Admin" asp-controller="Site" asp-action="Add" method="post" id="addSiteForm">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 border-end">
@@ -28,31 +26,38 @@
                                     <label asp-for="City" class="form-label">Şehir</label>
                                     <input asp-for="City" class="form-control" placeholder="Şehir">
                                 </div>
+
+                                <hr />
+                                <div class="form-check form-switch mt-3">
+                                    <input class="form-check-input" type="checkbox" id="addManagerToggle">
+                                    <label class="form-check-label fw-bold" for="addManagerToggle">Yönetici Bilgilerini Gir</label>
+                                </div>
                             </div>
-                            <div class="col-md-6">
+
+                            <div class="col-md-6" id="managerSection" style="display: none;">
                                 <h6 class="mb-3 text-primary">Yönetici Bilgileri</h6>
                                 <div class="mb-3">
                                     <label asp-for="Manager.FirstName" class="form-label">Ad</label>
-                                    <input asp-for="Manager.FirstName" class="form-control">
+                                    <input asp-for="Manager.FirstName" class="form-control manager-input">
                                 </div>
                                 <div class="mb-3">
                                     <label asp-for="Manager.LastName" class="form-label">Soyad</label>
-                                    <input asp-for="Manager.LastName" class="form-control">
+                                    <input asp-for="Manager.LastName" class="form-control manager-input">
                                 </div>
                                 <div class="mb-3">
                                     <label asp-for="Manager.Email" class="form-label">E-Posta</label>
-                                    <input asp-for="Manager.Email" class="form-control">
+                                    <input asp-for="Manager.Email" class="form-control manager-input">
                                 </div>
                                 <div class="mb-3">
                                     <label asp-for="Manager.Password" class="form-label">Parola</label>
-                                    <input asp-for="Manager.Password" type="password" class="form-control">
+                                    <input asp-for="Manager.Password" type="password" class="form-control manager-input">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-primary">Site ve Yöneticiyi Kaydet</button>
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
                     </div>
                 </form>
             </div>
@@ -60,4 +65,31 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('addManagerToggle');
+        const section = document.getElementById('managerSection');
+        const inputs = document.querySelectorAll('.manager-input');
 
+        toggle.addEventListener('change', function () {
+            if (this.checked) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+                // Gizlendiğinde input değerlerini temizle ki boş DTO gitmesin
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+            }
+        });
+
+        // Form gönderilmeden önce buton kapalıysa değerlerin null gitmesini sağla
+        document.getElementById('addSiteForm').addEventListener('submit', function (e) {
+            if (!toggle.checked) {
+                inputs.forEach(input => {
+                    input.removeAttribute('name'); // Name özniteliğini kaldırarak MVC model binding'e girmesini engelleriz
+                });
+            }
+        });
+    });
+</script>

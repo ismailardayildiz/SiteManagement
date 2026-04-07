@@ -13,6 +13,6 @@ namespace SiteManagement.Entity.DTOs.Sites
         public string Address { get; set; }
         public string City { get; set; }
 
-        public ManagerAddDto Manager { get; set; }
+        public ManagerAddDto? Manager { get; set; }
     }
 }

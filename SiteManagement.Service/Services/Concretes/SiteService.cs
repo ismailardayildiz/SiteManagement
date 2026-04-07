@@ -33,34 +33,43 @@ namespace SiteManagement.Service.Services.Concretes
 
         public async Task<IdentityResult> CreateSiteWithManagerAsync(SiteAddDto siteAddDto)
         {
+            Guid? managerId = null;
+            IdentityResult result = IdentityResult.Success;
 
-            var user = mapper.Map<AppUser>(siteAddDto.Manager);
-            user.UserName = siteAddDto.Manager.Email;
-
-
-            var result = await userManager.CreateAsync(user, siteAddDto.Manager.Password ?? "");
-
-            if (result.Succeeded)
+            // Eğer yönetici bilgileri doldurulmuşsa kullanıcıyı oluştur
+            if (siteAddDto.Manager != null && !string.IsNullOrEmpty(siteAddDto.Manager.Email))
             {
+                var user = mapper.Map<AppUser>(siteAddDto.Manager);
+                user.UserName = siteAddDto.Manager.Email;
 
-                var managerRole = await roleManager.FindByNameAsync("Manager");
-                if (managerRole != null)
+                result = await userManager.CreateAsync(user, siteAddDto.Manager.Password ?? "");
+
+                if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, managerRole.Name);
+                    var managerRole = await roleManager.FindByNameAsync("Manager");
+                    if (managerRole != null)
+                    {
+                        await userManager.AddToRoleAsync(user, managerRole.Name);
+                    }
+                    managerId = user.Id;
                 }
-
-
-                var site = new Site
+                else
                 {
-                    Name = siteAddDto.Name,
-                    Address = siteAddDto.Address,
-                    City = siteAddDto.City,
-                    ManagerId = user.Id
-                };
-
-                await unitOfWork.GetRepository<Site>().AddAsync(site);
-                await unitOfWork.SaveAsync();
+                    return result; // Kullanıcı oluşturma hatalarını dön
+                }
             }
+
+            // Siteyi her durumda oluştur (managerId null kalabilir)
+            var site = new Site
+            {
+                Name = siteAddDto.Name,
+                Address = siteAddDto.Address,
+                City = siteAddDto.City,
+                ManagerId = managerId // Nullable Guid
+            };
+
+            await unitOfWork.GetRepository<Site>().AddAsync(site);
+            await unitOfWork.SaveAsync();
 
             return result;
         }
