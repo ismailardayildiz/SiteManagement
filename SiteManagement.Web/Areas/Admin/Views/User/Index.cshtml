@@ -1,0 +1,87 @@
+﻿@model List<UserDto>
+
+<div id="modalPlaceHolder"></div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Kullanıcı Listesi</h5>
+        <button type="button" class="btn btn-success" data-toggle="ajax-modal" data-url="@Url.Action("Add", "User", new { Area = "Admin" })">
+            Yeni Kullanıcı Ekle
+        </button>
+    </div>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Ad Soyad</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>Rol</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.FirstName @user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td><span class="badge bg-label-info me-1">@user.Role</span></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" data-toggle="ajax-modal" data-url="@Url.Action("Update", "User", new { Area = "Admin", userId = user.Id })">
+                                Güncelle
+                            </button>
+
+                            <form asp-area="Admin" asp-controller="User" asp-action="Delete" method="post" style="display:inline;" onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var placeholderElement = $('#modalPlaceHolder');
+
+            // Modal Açma İşlemi
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    placeholderElement.html(data);
+                    placeholderElement.find('.modal').modal('show');
+                });
+            });
+
+            // Modal İçindeki Formu Kaydetme (AJAX Post)
+            placeholderElement.on('click', '[data-save="modal"]', function (event) {
+                event.preventDefault();
+
+                var form = $(this).parents('.modal').find('form');
+                var actionUrl = form.attr('action');
+                var dataToSend = form.serialize();
+
+                $.post(actionUrl, dataToSend).done(function (data) {
+                    // Eğer controller success=true döndüyse modalı kapat ve sayfayı yenile
+                    if (data.success) {
+                        placeholderElement.find('.modal').modal('hide');
+                        location.reload();
+                    } else {
+                        // ModelState geçerli değilse hatalarla birlikte partial view geri döner, içine bas
+                        placeholderElement.html(data);
+                        // Eğer client-side validation kullanıyorsanız (jquery.validate) formun tekrar parse edilmesi gerekir
+                        if(placeholderElement.find('.modal').length) {
+                             placeholderElement.find('.modal').modal('show');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

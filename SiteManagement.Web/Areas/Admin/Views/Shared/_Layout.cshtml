@@ -21,7 +21,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>Site Management</title>
 
     <meta name="description" content="" />
 
@@ -112,7 +112,7 @@
                                 </g>
                             </svg>
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Site Yönetimi</span>
                     </a>
 
                     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -142,27 +142,37 @@
                         </a>
                     </li>
                     </li>
-                    <li class="menu-item ">
-                        <a asp-area="Admin" asp-controller="Announcement" asp-action="Index" class="menu-link">
-                            <i class="menu-icon bx bx-announcement"></i>
-                            <div data-i18n="Analytics">Duyuru Yönetimi</div>
-                        </a>
-                    </li>
-                    </li>
                     <li class="menu-item">
                         <a asp-area="Admin" asp-controller="Block" asp-action="Index" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-buildings"></i>
+                            <i class="menu-icon tf-icons bx bx-building"></i>
                             <div>Blok Yönetimi</div>
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a asp-area="Admin" asp-controller="Apartment" asp-action="Index" class="menu-link">
+                            <i class="menu-icon bx bx-building-house"></i>
+                            <div>Daire Yönetimi</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">DUYURULAR</span></li>
+
+                    </li>
+                    <li class="menu-item ">
+                        <a asp-area="Admin" asp-controller="Announcement" asp-action="Index" class="menu-link">
+                            <i class="menu-icon bx bxs-megaphone"></i>
+                            <div data-i18n="Analytics">Duyuru Yönetimi</div>
+                        </a>
+                    </li>
+
 
                     <!-- Components -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">KULLANICILAR</span></li>
                     <!-- Cards -->
-                    <li class="menu-item">
-                        <a class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user"></i>
-                            <div data-i18n="Basic">Kullanıcı</div>
+                    <li class="menu-item ">
+                        <a asp-area="Admin" asp-controller="User" asp-action="Index" class="menu-link">
+                            <i class="menu-icon bx bx-user"></i>
+                            <div data-i18n="Analytics">Kullanıcı Yönetimi</div>
                         </a>
                     </li>
                     <li class="menu-item">

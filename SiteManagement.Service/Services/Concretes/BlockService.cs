@@ -34,7 +34,7 @@ namespace SiteManagement.Service.Services.Concretes
             var block = new Block
             {
                 Name = blockAddDto.Name,
-                FloorCount = blockAddDto.FloorCount, // Kat sayısı ataması
+                FloorCount = blockAddDto.FloorCount, 
                 SiteId = blockAddDto.SiteId
             };
             await unitOfWork.GetRepository<Block>().AddAsync(block);

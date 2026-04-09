@@ -97,17 +97,11 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
             return PartialView("Update", siteUpdateDto);
         }
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid siteId)
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id) // Parametre ismi JS'deki 'id' ile aynı olmalı
         {
-            try
-            {
-                await siteService.SafeDeleteSiteAsync(siteId);
-                return Json(new { success = true, message = "Site başarıyla silindi." });
-            }
-            catch (Exception)
-            {
-                return Json(new { success = false, message = "Site silinirken bir hata oluştu." });
-            }
+            await siteService.SafeDeleteSiteAsync(id);
+            return Json(new { success = true, message = "Site başarıyla silindi." });
         }
     }
 }

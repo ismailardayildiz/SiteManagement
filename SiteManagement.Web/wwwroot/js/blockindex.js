@@ -34,3 +34,17 @@
         });
     });
 });
+
+// Silme İşlemi
+$(document).on('click', '.delete-block', function () {
+    const id = $(this).data('id');
+    if (confirm("Bu bloğu silmek istediğinize emin misiniz?")) {
+        $.post('/Admin/Block/Delete/' + id).done(function (data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+});

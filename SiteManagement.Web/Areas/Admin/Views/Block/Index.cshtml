@@ -8,9 +8,9 @@
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Blok Yönetimi /</span> Bloklar</h4>
     <div class="card">
         <div class="card-header">
-            <a class="btn btn-primary" asp-area="Admin" asp-controller="Block" asp-action="Add">
+            <button class="btn btn-primary" id="btnAddBlock">
                 Blok Ekle <i class="bx bx-plus"></i>
-            </a>
+            </button>
         </div>
         <div class="table-responsive text-nowrap">
             <table class="table table-hover" id="blocksTable">
@@ -32,10 +32,10 @@
                             <td>@block.SiteName</td>
                             <td><span class="badge bg-label-success">Aktif</span></td>
                             <td>
-                                <button class="btn btn-sm btn-primary" data-id="@block.Id" id="updateBlock">
+                                <button class="btn btn-sm btn-primary update-block" data-id="@block.Id">
                                     <i class="bx bxs-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" data-id="@block.Id" id="deleteBlock">
+                                <button class="btn btn-sm btn-danger delete-block" data-id="@block.Id">
                                     <i class="bx bx-trash"></i>
                                 </button>
                             </td>
