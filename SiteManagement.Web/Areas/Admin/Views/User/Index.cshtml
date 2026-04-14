@@ -29,6 +29,10 @@
                         <td>@user.PhoneNumber</td>
                         <td><span class="badge bg-label-info me-1">@user.Role</span></td>
                         <td>
+                            <button type="button" class="btn btn-sm btn-info" data-toggle="ajax-modal" data-url="@Url.Action("Detail", "User", new { Area = "Admin", userId = user.Id })">
+                                Detay
+                            </button>
+
                             <button type="button" class="btn btn-sm btn-primary" data-toggle="ajax-modal" data-url="@Url.Action("Update", "User", new { Area = "Admin", userId = user.Id })">
                                 Güncelle
                             </button>

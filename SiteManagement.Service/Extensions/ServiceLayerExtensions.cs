@@ -25,6 +25,9 @@ namespace SiteManagement.Service.Extensions
             services.AddScoped<IAnnouncementService, AnnouncementService>();
             services.AddScoped<IBlockService, BlockService>();
             services.AddScoped<IUserService, UserService>();
+            
+
+
 
             services.AddAutoMapper(assembly);
             return services;

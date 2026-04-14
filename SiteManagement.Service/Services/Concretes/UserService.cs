@@ -51,7 +51,7 @@ namespace SiteManagement.Service.Services.Concretes
                 FirstName = userAddDto.FirstName,
                 LastName = userAddDto.LastName,
                 Email = userAddDto.Email,
-                UserName = userAddDto.Email, // Genellikle Email ve UserName aynı tutulur
+                UserName = userAddDto.Email,
                 PhoneNumber = userAddDto.PhoneNumber
             };
 

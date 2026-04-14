@@ -91,6 +91,19 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
             return PartialView("Update", userUpdateDto);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Detail(Guid userId)
+        {
+            var user = await _userService.GetUserForUpdateAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("Detail", user);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Delete(Guid userId)
         {

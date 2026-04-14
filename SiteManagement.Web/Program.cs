@@ -5,6 +5,8 @@ using SiteManagement.Data.Context;
 using SiteManagement.Data.Extensions;
 using SiteManagement.Entity.Entities;
 using SiteManagement.Service.Extensions;
+using SiteManagement.Service.Helpers.Images;
+using SiteManagement.Web.Helpers.Images;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.AddControllersWithViews()
         TimeOut = 5000,
     })
     .AddRazorRuntimeCompilation();
+
+builder.Services.AddScoped<IImageHelper, ImageHelper>();
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
@@ -62,11 +66,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseNToastNotify();
+
 app.UseSession();
 
 app.UseRouting();
-
+app.UseNToastNotify();
 app.UseAuthentication();
 app.UseAuthorization();
 

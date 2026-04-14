@@ -388,7 +388,7 @@
     <!-- Page JS -->
     <script src="~/sneat/assets/js/dashboards-analytics.js"></script>
     @await RenderSectionAsync("Scripts",false);
-    @await Component.InvokeAsync("NToastNotify")
+
 
 
     <!-- Place this tag in your head or just before your close body tag. -->
@@ -396,3 +396,5 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
+@using NToastNotify
+@addTagHelper *, NToastNotify
