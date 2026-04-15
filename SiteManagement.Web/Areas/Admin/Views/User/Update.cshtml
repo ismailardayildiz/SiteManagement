@@ -7,10 +7,25 @@
                 <h5 class="modal-title">Kullanıcı Güncelle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-area="Admin" asp-controller="User" asp-action="Update" id="form-user-update">
+            <form asp-area="Admin" asp-controller="User" asp-action="Update" id="form-user-update" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
                 <div class="modal-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="modal-body">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ImagePath" /> <div class="text-center mb-3">
+                            <img src="/images/@Model.ImagePath" class="rounded-circle" style="width:100px; height:100px; object-fit:cover;" />
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-mb-0">
+                                <label asp-for="ProfileImage" class="form-label">Profil Fotoğrafını Değiştir</label>
+                                <input asp-for="ProfileImage" type="file" class="form-control" accept="image/*" />
+                            </div>
+                        </div>
+
+                    </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-mb-0">

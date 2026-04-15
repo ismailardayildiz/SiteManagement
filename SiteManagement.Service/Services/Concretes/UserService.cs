@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace SiteManagement.Service.Services.Concretes
 {
     public class UserService : IUserService
@@ -52,7 +51,9 @@ namespace SiteManagement.Service.Services.Concretes
                 LastName = userAddDto.LastName,
                 Email = userAddDto.Email,
                 UserName = userAddDto.Email,
-                PhoneNumber = userAddDto.PhoneNumber
+                PhoneNumber = userAddDto.PhoneNumber,
+
+                ImagePath = userAddDto.ImagePath
             };
 
             var result = await _userManager.CreateAsync(user, userAddDto.Password);

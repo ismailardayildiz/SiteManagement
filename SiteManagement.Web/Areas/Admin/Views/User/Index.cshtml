@@ -54,8 +54,9 @@
         $(document).ready(function () {
             var placeholderElement = $('#modalPlaceHolder');
 
-            // Modal Açma İşlemi
-            $('button[data-toggle="ajax-modal"]').click(function (event) {
+            // 1. MODALI AÇMA İŞLEMİ (Butonun çalışmasını sağlayan kısım)
+            // Dinamik olarak yüklenen butonlar için .on('click') kullanmak daha güvenlidir
+            $(document).on('click', 'button[data-toggle="ajax-modal"]', function (event) {
                 var url = $(this).data('url');
                 $.get(url).done(function (data) {
                     placeholderElement.html(data);
@@ -63,26 +64,45 @@
                 });
             });
 
-            // Modal İçindeki Formu Kaydetme (AJAX Post)
-            placeholderElement.on('click', '[data-save="modal"]', function (event) {
+            // 2. FORMU KAYDETME İŞLEMİ (Resim yükleme destekli FormData yapısı)
+            placeholderElement.off('click', '[data-save="modal"]').on('click', '[data-save="modal"]', function (event) {
                 event.preventDefault();
 
-                var form = $(this).parents('.modal').find('form');
+                var button = $(this);
+                var form = button.parents('.modal').find('form');
                 var actionUrl = form.attr('action');
-                var dataToSend = form.serialize();
 
-                $.post(actionUrl, dataToSend).done(function (data) {
-                    // Eğer controller success=true döndüyse modalı kapat ve sayfayı yenile
-                    if (data.success) {
-                        placeholderElement.find('.modal').modal('hide');
-                        location.reload();
-                    } else {
-                        // ModelState geçerli değilse hatalarla birlikte partial view geri döner, içine bas
-                        placeholderElement.html(data);
-                        // Eğer client-side validation kullanıyorsanız (jquery.validate) formun tekrar parse edilmesi gerekir
-                        if(placeholderElement.find('.modal').length) {
-                             placeholderElement.find('.modal').modal('show');
+                // KRİTİK: Resim dosyasının gidebilmesi için FormData kullanıyoruz, serialize() DEĞİL!
+                var sendData = new FormData(form[0]);
+
+                // Çift tıklamayı önlemek için butonu pasif yap
+                button.prop('disabled', true);
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: sendData,
+                    processData: false, // JQuery'nin veriyi bozmasını engeller
+                    contentType: false, // Multipart/form-data sınırlarının korunmasını sağlar
+                    success: function (data) {
+                        if (data.success) {
+                            placeholderElement.find('.modal').modal('hide');
+                            location.reload();
+                        } else {
+                            // Validasyon hatası varsa formu hatalarla birlikte tekrar çiz
+                            placeholderElement.html(data);
+                            if(placeholderElement.find('.modal').length) {
+                                 placeholderElement.find('.modal').modal('show');
+                            }
                         }
+                    },
+                    error: function (err) {
+                        console.error("Sunucu hatası:", err);
+                        alert("Kayıt işlemi sırasında bir hata oluştu.");
+                    },
+                    complete: function () {
+                        // İşlem bitince butonu tekrar aktif et
+                        button.prop('disabled', false);
                     }
                 });
             });

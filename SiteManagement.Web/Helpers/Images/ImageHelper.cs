@@ -79,21 +79,28 @@ namespace SiteManagement.Web.Helpers.Images
 
         public async Task<ImageUploadedDto> Upload(string imageName, IFormFile file, ImageType imageType, string folderName = null)
         {
+            
             folderName ??= imageType == ImageType.User ? userImagesFolder : ProfileImagesFolder;
+            var rootPath = env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-            if (!Directory.Exists($"{wwwroot}/{imgFolder}/{folderName}"))
-                Directory.CreateDirectory($"{wwwroot}/{imgFolder}/{folderName}");
+            var folderPath = Path.Combine(rootPath, imgFolder, folderName);
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
 
             string fileExtension = Path.GetExtension(file.FileName);
             imageName = ReplaceInvalidChars(imageName);
             string newFileName = $"{imageName}_{Guid.NewGuid()}{fileExtension}";
-            var filePath = Path.Combine($"{wwwroot}/{imgFolder}/{folderName}", newFileName);
+
+            var filePath = Path.Combine(folderPath, newFileName);
 
             await using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
             return new ImageUploadedDto()
-            {
+            {    
                 FullName = $"{folderName}/{newFileName}"
             };
         }

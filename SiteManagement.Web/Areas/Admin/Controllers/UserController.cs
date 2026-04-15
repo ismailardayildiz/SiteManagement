@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteManagement.Entity.DTOs.Users;
+using SiteManagement.Entity.Enums;
+using SiteManagement.Service.Helpers.Images;
 using SiteManagement.Service.Services.Abstractions;
+using SiteManagement.Web.Helpers.Images;
 using System;
 using System.Threading.Tasks;
 
@@ -14,10 +17,12 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IImageHelper _imageHelper;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IImageHelper imageHelper)
         {
             _userService = userService;
+            _imageHelper = imageHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -35,14 +40,27 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(UserAddDto userAddDto)
+        [HttpPost]
+        // 3. [FromForm] EKLENDİ
+        public async Task<IActionResult> Add([FromForm] UserAddDto userAddDto)
         {
             if (ModelState.IsValid)
             {
+                // 4. RESİM KAYDETME KODLARI EKLENDİ
+                if (userAddDto.ProfileImage != null && userAddDto.ProfileImage.Length > 0)
+                {
+                    var imageResult = await _imageHelper.Upload(
+                        $"{userAddDto.FirstName}{userAddDto.LastName}",
+                        userAddDto.ProfileImage,
+                        ImageType.User);
+
+                    // Oluşan dosya yolunu DTO'ya veriyoruz ki UserService veritabanına yazsın
+                    userAddDto.ImagePath = imageResult.FullName;
+                }
+
                 var result = await _userService.CreateUserAsync(userAddDto);
                 if (result.Succeeded)
                 {
-                    // Başarılıysa AJAX'a JSON dönüyoruz
                     return Json(new { success = true });
                 }
 
@@ -70,10 +88,27 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(UserUpdateDto userUpdateDto)
+        public async Task<IActionResult> Update([FromForm] UserUpdateDto userUpdateDto)
         {
             if (ModelState.IsValid)
             {
+                // Eğer yeni bir fotoğraf seçilmişse
+                if (userUpdateDto.ProfileImage != null)
+                {
+                    // 1. Varsa eski fotoğrafı sunucudan fiziksel olarak sil
+                    if (!string.IsNullOrEmpty(userUpdateDto.ImagePath))
+                    {
+                        _imageHelper.Delete(userUpdateDto.ImagePath);
+                    }
+
+                    // 2. Yeni fotoğrafı yükle
+                    var imageUpload = await _imageHelper.Upload(
+                    $"{userUpdateDto.FirstName}{userUpdateDto.LastName}",
+                    userUpdateDto.ProfileImage, ImageType.User);
+                    // 3. Yeni yolu DTO'ya ata
+                    userUpdateDto.ImagePath = imageUpload.FullName;
+                }
+
                 var result = await _userService.UpdateUserAsync(userUpdateDto);
                 if (result.Succeeded)
                 {
