@@ -96,6 +96,11 @@ namespace SiteManagement.Service.Services.Concretes
             user.UserName = userUpdateDto.Email;
             user.PhoneNumber = userUpdateDto.PhoneNumber;
 
+            if (!string.IsNullOrEmpty(userUpdateDto.ImagePath))
+            {
+                user.ImagePath = userUpdateDto.ImagePath;
+            }
+
             var updateResult = await _userManager.UpdateAsync(user);
             if (updateResult.Succeeded)
             {
