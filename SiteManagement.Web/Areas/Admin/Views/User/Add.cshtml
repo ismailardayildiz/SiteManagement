@@ -35,7 +35,7 @@
                     <div class="row mb-3">
                         <div class="col-mb-0">
                             <label asp-for="Email" class="form-label">E-Posta</label>
-                            <input asp-for="Email" class="form-control" placeholder="ornek@site.com" />
+                            <input asp-for="Email" class="form-control" placeholder="ornek@site.com" autocomplete="off" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                     <div class="row mb-3">
                         <div class="col-mb-0">
                             <label asp-for="Password" class="form-label">Şifre</label>
-                            <input asp-for="Password" type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                            <input asp-for="Password" type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" autocomplete="new-password" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                     </div>

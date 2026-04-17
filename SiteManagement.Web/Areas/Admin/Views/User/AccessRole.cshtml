@@ -1,0 +1,38 @@
+﻿@model UserUpdateDto
+
+<div class="modal fade" id="userAccessRoleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kullanıcı Rolü Yönetimi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-area="Admin" asp-controller="User" asp-action="AccessRole" method="post" id="form-user-role-update">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="FirstName" />
+                    <input type="hidden" asp-for="LastName" />
+                    <input type="hidden" asp-for="Email" />
+
+                    <div class="alert alert-info" role="alert">
+                        <strong>@Model.FirstName @Model.LastName</strong> kullanıcısının yetki grubunu aşağıdan değiştirebilirsiniz.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label asp-for="RoleId" class="form-label">Kullanıcı Rolü</label>
+                            <select asp-for="RoleId" asp-items="ViewBag.Roles" class="form-select">
+                                <option value="">Rol Seçiniz...</option>
+                            </select>
+                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary" data-save="modal">Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
