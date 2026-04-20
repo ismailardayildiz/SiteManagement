@@ -1,0 +1,53 @@
+﻿@model List<UserDto>
+@{
+    ViewData["Title"] = "Kullanıcı Rolleri";
+}
+
+<div class="card">
+    <h5 class="card-header">Kullanıcı Rol Yönetimi</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Email</th>
+                    <th>Mevcut Rol</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td><strong>@user.FirstName @user.LastName</strong></td>
+                        <td>@user.Email</td>
+                        <td><span class="badge bg-label-primary me-1">@user.Role</span></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning"
+                                    data-url="@Url.Action("AccessRole", "Role", new { userId = user.Id, Area = "Admin" })"
+                                    onclick="loadRoleModal(this)">
+                                <i class="bx bx-key me-1"></i> Yetki Değiştir
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modal-container"></div>
+
+@section Scripts {
+    <script>
+        function loadRoleModal(button) {
+            var url = $(button).data('url');
+
+            // AJAX isteği ile Partial View'i alıp ekrana basıyoruz
+            $.get(url, function (data) {
+                $('#modal-container').html(data);
+                $('#userAccessRoleModal').modal('show');
+            });
+        }
+    </script>
+}

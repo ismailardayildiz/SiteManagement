@@ -8,13 +8,23 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]
-    public class RoleController
+    public class RoleController : Controller // Controller sınıfından kalıtım alındı
     {
         private readonly IUserService _userService;
+        private readonly IRoleService _roleService; // IRoleService eklendi
 
-        public RoleController(IUserService userService,)
+        public RoleController(IUserService userService, IRoleService roleService) // Virgül hatası düzeltildi
         {
             _userService = userService;
+            _roleService = roleService;
+        }
+
+        // Kullanıcıları ve mevcut rollerini listeleyecek sayfa
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var users = await _userService.GetAllUsersWithRoleAsync();
+            return View(users);
         }
 
         [HttpGet]
@@ -35,10 +45,11 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
             if (RoleId == Guid.Empty)
             {
                 ModelState.AddModelError("", "Lütfen geçerli bir rol seçiniz.");
-                return RedirectToAction("Index", "User", new { Area = "Admin" });
+                return RedirectToAction("Index", "Role", new { Area = "Admin" });
             }
 
-            var result = await _userService.AssignRoleToUserAsync(Id, RoleId);
+            // _userService yerine doğru servis olan _roleService kullanıldı
+            var result = await _roleService.AssignRoleToUserAsync(Id, RoleId);
 
             if (result.Succeeded)
             {

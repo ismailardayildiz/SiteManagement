@@ -7,7 +7,7 @@
                 <h5 class="modal-title">Kullanıcı Rolü Yönetimi</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-area="Admin" asp-controller="User" asp-action="AccessRole" method="post" id="form-user-role-update">
+            <form asp-area="Admin" asp-controller="Role" asp-action="AccessRole" method="post" id="form-user-role-update">
                 <div class="modal-body">
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="FirstName" />
@@ -30,7 +30,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Kapat</button>
-                    <button type="button" class="btn btn-primary" data-save="modal">Değişiklikleri Kaydet</button>
+                    <button type="submit" class="btn btn-primary" data-save="modal">Değişiklikleri Kaydet</button>
                 </div>
             </form>
         </div>
