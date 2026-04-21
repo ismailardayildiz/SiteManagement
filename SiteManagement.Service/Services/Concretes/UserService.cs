@@ -23,6 +23,14 @@ namespace SiteManagement.Service.Services.Concretes
             _mapper = mapper;
         }
 
+        public async Task<List<UserDto>> GetAllUsersAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var userDtos = _mapper.Map<List<UserDto>>(users);
+
+            return userDtos;
+        }
+
         public async Task<List<AppRole>> GetAllRolesAsync()
         {
             return await _roleManager.Roles.ToListAsync();

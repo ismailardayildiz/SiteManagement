@@ -14,6 +14,8 @@ namespace SiteManagement.Entity.Entities
 
         public string? ImagePath { get; set; }
 
+        public string FullName => $"{FirstName} {LastName}";
+
         public ICollection<Apartment> OwnedApartments { get; set; }
         public ICollection<Apartment> RentedApartments { get; set; }
         public ICollection<Vehicle> Vehicles { get; set; }

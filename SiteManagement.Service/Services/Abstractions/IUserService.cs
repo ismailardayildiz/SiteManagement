@@ -11,6 +11,7 @@ namespace SiteManagement.Service.Services.Abstractions
 {
     public interface IUserService
     {
+        Task<List<UserDto>> GetAllUsersAsync();
         Task<List<UserDto>> GetAllUsersWithRoleAsync();
         Task<List<AppRole>> GetAllRolesAsync();
         Task<IdentityResult> CreateUserAsync(UserAddDto userAddDto);

@@ -9,6 +9,7 @@ namespace SiteManagement.Service.Services.Abstractions
 {
     public interface IBlockService
     {
+        Task<List<BlockDto>> GetAllBlocksBySiteIdAsync(Guid siteId);
         Task<List<BlockDto>> GetAllBlocksWithSitesAsync();
         Task CreateBlockAsync(BlockAddDto blockAddDto);
         Task<BlockUpdateDto> GetBlockUpdateDtoAsync(Guid blockId);

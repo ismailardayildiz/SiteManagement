@@ -26,6 +26,7 @@ namespace SiteManagement.Service.Extensions
             services.AddScoped<IBlockService, BlockService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IApartmentService, ApartmentService>();
             
 
 

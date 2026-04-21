@@ -22,9 +22,17 @@ namespace SiteManagement.Service.Services.Concretes
             this.mapper = mapper;
         }
 
+        public async Task<List<BlockDto>> GetAllBlocksBySiteIdAsync(Guid siteId)
+        {
+            // Hem seçilen SiteId'ye eşit olan hem de silinmemiş (IsDeleted == false) blokları getir
+            var blocks = await unitOfWork.GetRepository<Block>().GetAllAsync(b => b.SiteId == siteId && !b.IsDeleted);
+
+            // Elde edilen Entity listesini DTO listesine dönüştür ve döndür
+            return mapper.Map<List<BlockDto>>(blocks);
+        }
+
         public async Task<List<BlockDto>> GetAllBlocksWithSitesAsync()
         {
-            // Blokları bağlı oldukları Site bilgisiyle birlikte getirir
             var blocks = await unitOfWork.GetRepository<Block>().GetAllAsync(x => !x.IsDeleted, b => b.Site);
             return mapper.Map<List<BlockDto>>(blocks);
         }

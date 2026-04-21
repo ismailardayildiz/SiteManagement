@@ -23,6 +23,12 @@ namespace SiteManagement.Service.Services.Concretes
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
+
+        public async Task<List<SiteDto>> GetAllSitesNonDeletedAsync()
+        {
+            var sites = await unitOfWork.GetRepository<Site>().GetAllAsync(s => !s.IsDeleted);
+            return mapper.Map<List<SiteDto>>(sites);
+        }
         public async Task<List<SiteDto>> GetAllSitesWithManagerNameAsync()
         {
             var sites = await unitOfWork.GetRepository<Site>().GetAllAsync(x => !x.IsDeleted, s => s.Manager);

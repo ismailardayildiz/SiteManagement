@@ -12,6 +12,7 @@ namespace SiteManagement.Service.Services.Abstractions
 {
     public interface ISiteService
     {
+        Task<List<SiteDto>> GetAllSitesNonDeletedAsync();
         Task<List<SiteDto>> GetAllSitesWithManagerNameAsync();
         Task<IdentityResult> CreateSiteWithManagerAsync(SiteAddDto siteAddDto);
         Task<IdentityResult> UpdateSiteWithManagerAsync(SiteUpdateDto siteUpdateDto);
