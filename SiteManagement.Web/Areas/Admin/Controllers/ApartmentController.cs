@@ -28,7 +28,7 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
             var users = await userService.GetAllUsersAsync();
 
             ViewBag.Sites = new SelectList(sites, "Id", "Name");
-            ViewBag.Users = new SelectList(users, "Id", "FullName"); // FullName property'niz olduğunu varsayıyorum
+            ViewBag.Users = new SelectList(users, "Id", "FullName");
             return View();
         }
 
@@ -42,7 +42,7 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBlocksBySiteId(Guid siteId)
         {
-            var blocks = await _blockService.GetAllBlocksBySiteIdAsync(siteId); // BlockService içinde bu metodun olduğunu varsayıyorum
+            var blocks = await _blockService.GetAllBlocksBySiteIdAsync(siteId);
             return Json(blocks);
         }
 
@@ -55,13 +55,19 @@ namespace SiteManagement.Web.Areas.Admin.Controllers
 
                 if (errorMessage != null)
                 {
-
                     return Json(new { success = false, message = errorMessage });
                 }
 
                 return Json(new { success = true, message = "Daire başarıyla eklendi." });
             }
-            return Json(new { success = false, message = "Lütfen form bilgilerini eksiksiz doldurun." });
+
+            // EĞER BURAYA DÜŞÜYORSA: Model eşleşmesinde bir sorun var demektir.
+            // Hataları toplayıp ekrana gönderelim:
+            var errors = string.Join("<br/>", ModelState.Values
+                                .SelectMany(v => v.Errors)
+                                .Select(e => e.ErrorMessage));
+
+            return Json(new { success = false, message = $"<b>Validasyon Hatası:</b><br/>{errors}" });
         }
 
         [HttpGet]

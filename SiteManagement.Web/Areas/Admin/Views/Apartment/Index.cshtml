@@ -21,7 +21,7 @@
                         <th>Blok Adı</th>
                         <th>Kat No</th>
                         <th>Daire No</th>
-                        <th>Metrekare</th>
+                        <th>Kiracı</th>
                         <th>Durum</th>
                         <th>İşlemler</th>
                     </tr>
@@ -117,7 +117,7 @@
             loadDataTable();
         });
 
-        function loadDataTable() {
+                function loadDataTable() {
             dataTable = $('#apartmentsTable').DataTable({
                 ajax: { url: '/Admin/Apartment/GetApartments' },
                 columns: [
@@ -125,7 +125,12 @@
                     { data: 'blockName' },
                     { data: 'floor' },
                     { data: 'apartmentNumber' },
-                    { data: 'squareMeters' },
+                    {
+                        data: 'tenantName', // DTO'daki kiracı isim property'si (Genelde tenantName olur)
+                        render: function(data) {
+                            return data ? data : '<span class="text-muted">Kiracı Yok</span>';
+                        }
+                    },
                     {
                         data: 'status',
                         render: function (data) {
@@ -189,18 +194,34 @@
             });
         }
 
-        function saveApartment() {
+                function saveApartment() {
             var formData = $('#apartmentForm').serialize();
             var id = $('#ApartmentId').val();
-            var url = id ? '/Admin/Apartment/Update' : '/Admin/Apartment/Add';
 
-            $.post(url, formData, function (res) {
-                if (res.success) {
-                    $('#apartmentModal').modal('hide');
-                    dataTable.ajax.reload();
-                    Swal.fire('Başarılı!', res.message, 'success');
-                } else {
-                    Swal.fire('Hata!', res.message, 'error');
+            // id boş string ("") ise url Add olacak, Guid doluysa Update olacak
+            var url = (id && id !== "") ? '/Admin/Apartment/Update' : '/Admin/Apartment/Add';
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        $('#apartmentModal').modal('hide');
+                        dataTable.ajax.reload();
+                        Swal.fire('Başarılı!', res.message, 'success');
+                    } else {
+                        // Sunucudan dönen özel hata mesajını göster
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            html: res.message // text yerine html kullanıyoruz
+                        });
+                    }
+                },
+                error: function (err) {
+                    console.log("Sunucu Hatası:", err);
+                    Swal.fire('Kritik Hata!', 'Sunucu ile iletişim kurulamadı veya kod tarafında bir çökme yaşandı. (Tarayıcı konsoluna F12 ile bakın)', 'error');
                 }
             });
         }

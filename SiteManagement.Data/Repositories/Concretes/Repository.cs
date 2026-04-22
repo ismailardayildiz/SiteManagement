@@ -44,7 +44,7 @@ namespace SiteManagement.Data.Repositories.Concretes
                 foreach (var item in includeProperties)
                     query = query.Include(item);
 
-            return query.SingleAsync();
+            return query.SingleOrDefaultAsync();
         }
 
         public async Task<T> GetByGuidAsync(Guid id)
