@@ -15,5 +15,8 @@ namespace SiteManagement.Entity.DTOs.Apartments
         public string ApartmentNumber { get; set; }
         public decimal SquareMeters { get; set; }
         public string Status { get; set; } // Boş, Ev Sahibi, Kiracı
+        public string TenantName { get; set; }
+        public string OwnerName { get; set; }
+
     }
 }

@@ -21,6 +21,7 @@
                         <th>Blok Adı</th>
                         <th>Kat No</th>
                         <th>Daire No</th>
+                        <th>Ev Sahibi</th>
                         <th>Kiracı</th>
                         <th>Durum</th>
                         <th>İşlemler</th>
@@ -119,27 +120,33 @@
 
                 function loadDataTable() {
             dataTable = $('#apartmentsTable').DataTable({
-                ajax: { url: '/Admin/Apartment/GetApartments' },
-                columns: [
+               ajax: { url: '/Admin/Apartment/GetApartments' },
+            columns: [
                     { data: 'siteName' },
                     { data: 'blockName' },
                     { data: 'floor' },
                     { data: 'apartmentNumber' },
                     {
-                        data: 'tenantName', // DTO'daki kiracı isim property'si (Genelde tenantName olur)
+                        data: 'ownerName', // Ev Sahibi
+                        render: function(data) {
+                            return data ? data : '<span class="text-muted">Yok</span>';
+                        }
+                    },
+                    {
+                        data: 'tenantName', // Kiracı
                         render: function(data) {
                             return data ? data : '<span class="text-muted">Kiracı Yok</span>';
                         }
                     },
                     {
-                        data: 'status',
+                        data: 'status', // Durum
                         render: function (data) {
                             var badge = data === 'Boş' ? 'bg-label-warning' : (data === 'Kiracı' ? 'bg-label-info' : 'bg-label-success');
                             return `<span class="badge ${badge}">${data}</span>`;
                         }
                     },
                     {
-                        data: 'id',
+                        data: 'id', // İşlemler Butonları
                         render: function (data) {
                             return `
                                 <button class="btn btn-sm btn-icon btn-primary" onclick="openEditModal('${data}')"><i class="bx bx-edit"></i></button>
@@ -147,8 +154,8 @@
                             `;
                         }
                     }
-                ],
-                language: { url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json" }
+                    ],
+           language: { url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Turkish.json" }
             });
         }
 

@@ -18,7 +18,10 @@ namespace SiteManagement.Service.AutoMapper.Apartments
                 .ForMember(dest => dest.BlockName, opt => opt.MapFrom(src => src.Block.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
                     src.TenantId != null || src.IsRented ? "Kiracı" :
-                    (src.OwnerId != null ? "Ev Sahibi" : "Boş")));
+                    (src.OwnerId != null ? "Ev Sahibi" : "Boş")))
+                .ForMember(dest => dest.TenantName, opt => opt.MapFrom(src => src.Tenant != null ? src.Tenant.FirstName + " " + src.Tenant.LastName : null))
+                .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Owner != null ? src.Owner.FirstName + " " + src.Owner.LastName : null));
+
 
             CreateMap<ApartmentAddDto, Apartment>();
             CreateMap<Apartment, ApartmentUpdateDto>().ReverseMap();

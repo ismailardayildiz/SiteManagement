@@ -24,7 +24,7 @@ namespace SiteManagement.Service.Services.Concretes
 
         public async Task<List<ApartmentListDto>> GetAllApartmentsNonDeletedAsync()
         {
-            var apartments = await _unitOfWork.GetRepository<Apartment>().GetAllAsync(a => !a.IsDeleted, a => a.Site, a => a.Block);
+            var apartments = await _unitOfWork.GetRepository<Apartment>().GetAllAsync(a => !a.IsDeleted, a => a.Site, a => a.Block, a => a.Tenant, a => a.Owner );
             return _mapper.Map<List<ApartmentListDto>>(apartments);
         }
 
