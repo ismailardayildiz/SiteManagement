@@ -1,0 +1,342 @@
+﻿
+@model List<DueListDto>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Aidat Yönetimi /</span> Aidatlar</h4>
+
+    <div class="card">
+        <div class="card-header border-bottom">
+            <h5 class="card-title mb-0">Aidat Listesi</h5>
+            <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addDueModal">
+                <i class="bx bx-plus me-1"></i> Yeni Aidat Ekle
+            </button>
+        </div>
+        <div class="card-datatable table-responsive text-nowrap m-3">
+            <table class="table table-hover" id="duesTable">
+                <thead>
+                    <tr>
+                        <th>Site Adı</th>
+                        <th>Daire</th>
+                        <th>Dönem</th>
+                        <th>Tutar</th>
+                        <th>Son Ödeme</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var totalPaid = item.Payments?.Sum(p => p.PaidAmount) ?? 0;
+                        <tr>
+                            <td>@item.Apartment.Site.Name</td>
+                            <td><strong>@item.Apartment.Block.Name - No: @item.Apartment.ApartmentNumber</strong></td>
+                            <td>@item.Month/@item.Year</td>
+                            <td>@item.Amount.ToString("C2")</td>
+                            <td>@item.DueDate.ToShortDateString()</td>
+                            <td>
+                                @if (totalPaid >= item.Amount)
+                                {
+                                    <span class="badge bg-label-success">Ödendi</span>
+                                }
+                                else if (totalPaid > 0)
+                                {
+
+                                    <span class="badge bg-label-warning">Kısmi Ödendi</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge bg-label-danger">Ödenmedi</span>
+                                }
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-success btn-collect-due" data-id="@item.Id" title="Ödeme Al">
+                                    <i class="bx bx-money"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-edit-due" data-id="@item.Id">
+                                    <i class="bx bx-edit-alt"></i>
+                                </button>
+                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-dueId="@item.Id"><i class="bx bx-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addDueModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yeni Aidat Tanımla</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Add" method="post">
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Site Seçimi</label>
+                            <select id="siteSelect" class="form-select" required>
+                                <option value="">Önce Site Seçiniz...</option>
+                                @foreach (var site in ViewBag.Sites)
+                                {
+                                    <option value="@site.Id">@site.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Daire Seçimi</label>
+                            <select id="apartmentSelect" name="ApartmentId" class="form-select" required disabled>
+                                <option value="">Önce siteyi seçin...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Yıl</label>
+                            <input name="Year" type="number" class="form-control" value="@DateTime.Now.Year" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Ay</label>
+                            <select name="Month" class="form-select">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    <option value="@i" selected="@(i == DateTime.Now.Month)">@i</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Tutar</label>
+                            <input name="Amount" type="number" step="0.01" class="form-control" placeholder="0.00" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Son Ödeme Tarihi</label>
+                            <input name="DueDate" type="date" class="form-control" value="@DateTime.Now.AddDays(10).ToString("yyyy-MM-dd")" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateDueModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aidat Güncelle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Update" method="post">
+                <input type="hidden" name="Id" id="editDueId" /> <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Site Seçimi</label>
+                            <select id="editSiteSelect" class="form-select" required>
+                                <option value="">Site Seçiniz...</option>
+                                @foreach (var site in ViewBag.Sites)
+                                {
+                                    <option value="@site.Id">@site.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Daire Seçimi</label>
+                            <select id="editApartmentSelect" name="ApartmentId" class="form-select" required>
+                                <option value="">Önce siteyi seçin...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Yıl</label>
+                            <input name="Year" id="editYear" type="number" class="form-control" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Ay</label>
+                            <select name="Month" id="editMonth" class="form-select">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Tutar</label>
+                            <input name="Amount" id="editAmount" type="number" step="0.01" class="form-control" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Son Ödeme Tarihi</label>
+                            <input name="DueDate" id="editDueDate" type="date" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="collectDueModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tahsilat: <span id="collectApartmentInfo" class="text-primary"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Collect" method="post">
+                <input type="hidden" name="DueId" id="collectDueId" />
+                <input type="hidden" name="PayerId" id="collectPayerId" />
+
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Ödenecek Tutar (Aidat Borcu)</label>
+                            <input name="PaidAmount" id="collectPaidAmount" type="number" step="0.01" class="form-control" required />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Ödeme Tarihi</label>
+                            <input name="PaymentDate" id="collectPaymentDate" type="date" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col mb-3">
+                            <label class="form-label">Ödeme Yöntemi</label>
+                            <select name="PaymentMethod" class="form-select" required>
+                                <option value="Nakit">Nakit</option>
+                                <option value="Havale/EFT">Havale/EFT</option>
+                                <option value="Kredi Kartı">Kredi Kartı</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-success">Ödemeyi Tamamla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#duesTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/tr.json' }
+            });
+        });
+                $('#siteSelect').change(function () {
+            var siteId = $(this).val();
+            var apartmentSelect = $('#apartmentSelect');
+
+            if (siteId) {
+                // Site seçildiyse o sitenin dairelerini getir
+                $.get('/Admin/Due/GetApartmentsBySite', { siteId: siteId }, function (data) {
+                    apartmentSelect.empty().append('<option value="">Daire Seçiniz...</option>');
+                    $.each(data, function (i, item) {
+                        apartmentSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
+                    });
+                    apartmentSelect.prop('disabled', false); // Daire seçimini aktif et
+                });
+            } else {
+                // Site seçimi iptal edildiyse daireleri temizle ve pasif yap
+                apartmentSelect.empty().append('<option value="">Önce siteyi seçin...</option>').prop('disabled', true);
+            }
+        });
+
+        // Tablodaki Düzenle butonuna tıklandığında çalışır (DataTables ile tam uyumlu)
+        $(document).on('click', '.btn-edit-due', function () {
+            var dueId = $(this).data('id'); // Tıklanan butonun id'sini al
+
+            $.get('/Admin/Due/GetDueForUpdate', { dueId: dueId }, function (data) {
+                // Form alanlarını doldur
+                $('#editDueId').val(data.due.id);
+                $('#editYear').val(data.due.year);
+                $('#editMonth').val(data.due.month);
+                $('#editAmount').val(data.due.amount);
+                // Tarih formatını (yyyy-MM-dd) input'a uygun hale getir
+                $('#editDueDate').val(data.due.dueDate.split('T')[0]);
+
+                // Siteyi seç
+                $('#editSiteSelect').val(data.siteId);
+
+                // Daireleri getir ve mevcut daireyi seç
+                loadApartments(data.siteId, '#editApartmentSelect', data.due.apartmentId);
+
+                // Modalı göster
+                $('#updateDueModal').modal('show');
+            });
+        });
+
+        // Ortak daire yükleme fonksiyonu
+        function loadApartments(siteId, targetSelectId, selectedApartmentId = null) {
+            var select = $(targetSelectId);
+            $.get('/Admin/Due/GetApartmentsBySite', { siteId: siteId }, function (data) {
+                select.empty().append('<option value="">Daire Seçiniz...</option>');
+                $.each(data, function (i, item) {
+                    var selected = (item.id == selectedApartmentId) ? 'selected' : '';
+                    select.append('<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>');
+                });
+                select.prop('disabled', false);
+            });
+        }
+
+        // Güncelleme modalındaki site değişirse daireleri güncelle
+        $('#editSiteSelect').change(function() {
+            loadApartments($(this).val(), '#editApartmentSelect');
+        });
+
+                // URL'yi tanımla (En üstteki URL tanımlarının yanına koyabilirsin)
+        var getDueForCollectUrl = '@Url.Action("GetDueForCollect", "Due", new { area = "Admin" })';
+
+        // ÖDEME MODALINI AÇMA KODU
+        $(document).on('click', '.btn-collect-due', function () {
+            var dueId = $(this).data('id');
+
+            $.ajax({
+                url: getDueForCollectUrl,
+                type: 'GET',
+                data: { dueId: dueId },
+                success: function (data) {
+                    if(data.error) {
+                        alert("Sunucu Hatası: " + data.error);
+                        return;
+                    }
+
+                    // Gelen verileri form inputlarına doldur
+                    $('#collectDueId').val(data.dueId);
+                    $('#collectPayerId').val(data.payerId);
+                    $('#collectPaidAmount').val(data.totalDueAmount); // Beklenen tutarı hazır getirir
+                    $('#collectPaymentDate').val(data.paymentDate); // Bugünün tarihini hazır getirir
+
+                    // Başlıktaki daire bilgisini yaz
+                    $('#collectApartmentInfo').text(data.apartmentInfo);
+
+                    // Modalı göster
+                    $('#collectDueModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Hatası: ", error);
+                    alert("Ödeme bilgileri getirilemedi!");
+                }
+            });
+        });
+    </script>
+}

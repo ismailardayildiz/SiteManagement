@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SiteManagement.Entity.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace SiteManagement.Entity.DTOs.Apartments
     {
         public Guid Id { get; set; }
         public string SiteName { get; set; }
+        public Guid SiteId { get; set; }
         public string BlockName { get; set; }
         public int Floor { get; set; }
         public string ApartmentNumber { get; set; }

@@ -154,11 +154,17 @@
                             <div>Daire Yönetimi</div>
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="menu-link">
+                            <i class="menu-icon bx bx-user"></i>
+                            <div>Çalışan Yönetimi</div>
+                        </a>
+                    </li>
 
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">MUHASEBE YÖNETİMİ</span></li>
 
                     <li class="menu-item ">
-                        <a asp-area="Admin" asp-controller="Dues" asp-action="Index" class="menu-link">
+                        <a asp-area="Admin" asp-controller="Due" asp-action="Index" class="menu-link">
                             <i class="menu-icon bx bx-wallet-alt"></i>
                             <div data-i18n="Analytics">Aidat Yönetimi</div>
                         </a>
@@ -186,7 +192,7 @@
                     <li class="menu-item">
                         <a asp-area="Admin" asp-controller="Role" asp-action="Index" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                            <div data-i18n="Basic">Role</div>
+                            <div data-i18n="Basic">Yetki Yönetimi</div>
                         </a>
                     </li>
 
