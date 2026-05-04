@@ -1,0 +1,25 @@
+﻿@model SiteManagement.Entity.DTOs.Complaints.ComplaintDto
+
+<div class="row">
+    <div class="col-mb-3 mb-3">
+        <label class="form-label fw-bold">Gönderim Tarihi:</label>
+        <p>@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+    </div>
+    <div class="col-mb-3 mb-3">
+        <label class="form-label fw-bold">Mevcut Durum:</label>
+        <p>@Model.Status.ToString()</p>
+    </div>
+    <div class="col-mb-3 mb-3">
+        <label class="form-label fw-bold">Başlık:</label>
+        <p>@Model.Title</p>
+    </div>
+    <div class="col-mb-3 mb-3">
+        <label class="form-label fw-bold">Detaylı Açıklama:</label>
+        <div class="p-3 border rounded bg-light">
+            @Model.Description
+        </div>
+    </div>
+</div>
+<div class="modal-footer px-0 pb-0">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+</div>

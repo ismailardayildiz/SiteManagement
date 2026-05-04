@@ -1,0 +1,48 @@
+﻿@model SiteManagement.Entity.DTOs.Employees.EmployeeUpdateDto
+
+<div class="modal fade" id="employeeUpdateModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Çalışan Güncelle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="employeeUpdateForm" asp-action="Update" asp-controller="Employee" asp-area="Admin" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <!-- AddPartial.cshtml içindeki input alanlarının birebir aynısı buraya gelecek -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label">Adı</label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label">Soyadı</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="JobTitle" class="form-label">Görevi</label>
+                        <input asp-for="JobTitle" class="form-control" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Salary" class="form-label">Maaş</label>
+                            <input asp-for="Salary" type="number" class="form-control" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateEmployee">Güncelle</button>
+            </div>
+        </div>
+    </div>
+</div>

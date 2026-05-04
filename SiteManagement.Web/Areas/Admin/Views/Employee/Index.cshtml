@@ -1,0 +1,140 @@
+﻿@{
+    ViewData["Title"] = "Çalışan Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Yönetim /</span> Çalışanlar</h4>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Çalışan Listesi</h5>
+            <button type="button" class="btn btn-primary" onclick="showAddModal()">
+                <i class="bx bx-plus"></i> Yeni Çalışan Ekle
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover" id="employeesTable">
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>Görev</th>
+                            <th>Telefon</th>
+                            <th>Maaş</th>
+                            <th>Site</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Veriler DataTables ile JSON üzerinden yüklenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal PlaceHolder -->
+<div id="modalPlaceHolder"></div>
+
+@section Scripts {
+    <script>
+        var dataTable;
+
+        $(document).ready(function () {
+            // DataTables İnitialization
+            dataTable = $('#employeesTable').DataTable({
+                ajax: {
+                    url: '/Admin/Employee/GetAll',
+                    type: 'GET',
+                    datatype: 'json'
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return data.firstName + " " + data.lastName;
+                        }
+                    },
+                    { data: 'jobTitle' },
+                    { data: 'phoneNumber' },
+                    { data: 'salary' },
+                    { data: 'siteName' },
+                    {
+                        data: 'id',
+                        render: function (data) {
+                            return `
+                                <button class="btn btn-sm btn-info" onclick="showUpdateModal('${data}')"><i class="bx bx-edit"></i> Düzenle</button>
+                                <button class="btn btn-sm btn-danger" onclick="safeDeleteEmployee('${data}')"><i class="bx bx-trash"></i> Çıkış Ver</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+
+        // Ekleme Modalı Getirme
+        function showAddModal() {
+            $.get('/Admin/Employee/Add').done(function (data) {
+                $('#modalPlaceHolder').html(data);
+                $('#employeeAddModal').modal('show');
+                $.validator.unobtrusive.parse("#employeeAddForm");
+            });
+        }
+
+        // Güncelleme Modalı Getirme
+        function showUpdateModal(id) {
+            $.get('/Admin/Employee/Update/' + id).done(function (data) {
+                $('#modalPlaceHolder').html(data);
+                $('#employeeUpdateModal').modal('show');
+                $.validator.unobtrusive.parse("#employeeUpdateForm");
+            });
+        }
+
+        // Ekleme POST İşlemi
+        $(document).on('click', '#btnSaveEmployee', function (e) {
+            e.preventDefault();
+            var form = $('#employeeAddForm');
+            if (!form.valid()) return;
+
+            $.post('/Admin/Employee/Add', form.serialize()).done(function (res) {
+                if (res.isValid) {
+                    $('#employeeAddModal').modal('hide');
+                    dataTable.ajax.reload();
+                } else {
+                    $('#modalPlaceHolder').html(res);
+                    $.validator.unobtrusive.parse("#employeeAddForm");
+                }
+            });
+        });
+
+        // Güncelleme POST İşlemi
+        $(document).on('click', '#btnUpdateEmployee', function (e) {
+            e.preventDefault();
+            var form = $('#employeeUpdateForm');
+            if (!form.valid()) return;
+
+            $.post('/Admin/Employee/Update', form.serialize()).done(function (res) {
+                if (res.isValid) {
+                    $('#employeeUpdateModal').modal('hide');
+                    dataTable.ajax.reload();
+                } else {
+                    $('#modalPlaceHolder').html(res);
+                    $.validator.unobtrusive.parse("#employeeUpdateForm");
+                }
+            });
+        });
+
+        // Çıkış Verme (Soft Delete) İşlemi
+        function safeDeleteEmployee(id) {
+            if (confirm("Bu çalışana çıkış vermek (silmek) istediğinize emin misiniz?")) {
+                $.post('/Admin/Employee/SafeDelete/' + id).done(function (res) {
+                    if (res.success) {
+                        dataTable.ajax.reload();
+                    }
+                });
+            }
+        }
+    </script>
+}

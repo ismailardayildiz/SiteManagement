@@ -1,0 +1,24 @@
+﻿@model SiteManagement.Entity.DTOs.Complaints.ComplaintUpdateDto
+
+<form asp-action="Update" asp-controller="Complaint" asp-area="Admin" onsubmit="return jQueryAjaxPost(this);" autocomplete="off">
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="col-mb-3 mb-3">
+            <label class="form-label">Başlık (Sadece Okuma)</label>
+            <input asp-for="Title" class="form-control" readonly />
+        </div>
+        <div class="col-mb-3 mb-3">
+            <label class="form-label">Şikayet İçeriği</label>
+            <textarea asp-for="Description" class="form-control" rows="4" readonly></textarea>
+        </div>
+        <div class="col-mb-3 mb-3">
+            <label asp-for="Status" class="form-label">Durumu Güncelle</label>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<SiteManagement.Entity.Enums.ComplaintStatus>()" class="form-select">
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer px-0 pb-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-success">Durumu Kaydet</button>
+    </div>
+</form>

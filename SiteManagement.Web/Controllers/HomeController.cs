@@ -1,37 +1,42 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SiteManagement.Entity.Enums;
 using SiteManagement.Service.Services.Abstractions;
-using SiteManagement.Web.Models;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SiteManagement.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly ISiteService siteService;
+        private readonly IAnnouncementService _announcementService;
+        private readonly IDueService _dueService;
 
-        public HomeController(ILogger<HomeController> logger, ISiteService siteService)
+        // Servisleri Dependency Injection (DI) ile alıyoruz
+        public HomeController(IAnnouncementService announcementService, IDueService dueService)
         {
-            _logger = logger;
-            this.siteService = siteService;
+            _announcementService = announcementService;
+            _dueService = dueService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var sites = await siteService.GetAllSitesWithManagerNameAsync();
-                
-            return View(sites);
-        }
+            // Sisteme giriş yapan kullanıcının ID'sini alıyoruz
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        public IActionResult Privacy()
-        {
+            // Tüm duyuruları çekiyoruz (İsteğe bağlı olarak son 5 duyuru şeklinde sınırlandırılabilir)
+            var announcements = await _announcementService.GetAllAnnouncementsWithSiteAsync();
+
+ 
+            // Not: Servis katmanında GetDuesByUserIdAsync  metodunu kullan.
+            var allDues = await _dueService.GetAllDuesNonDeletedAsync();
+            var unpaidDues = allDues.Where(x => x.PaymentStatus != PaymentStatus.Paid).ToList(); 
+
+            // Verileri View'a taşıyoruz
+            ViewBag.Announcements = announcements;
+            ViewBag.UnpaidDues = unpaidDues;
+
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

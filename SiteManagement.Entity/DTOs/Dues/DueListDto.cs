@@ -1,4 +1,5 @@
 ﻿using SiteManagement.Entity.Entities;
+using SiteManagement.Entity.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,6 @@ namespace SiteManagement.Entity.DTOs.Dues
 
         // Ödeme durumunu hesaplamak için ödemeleri de çekiyoruz
         public ICollection<Payment> Payments { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
     }
 }

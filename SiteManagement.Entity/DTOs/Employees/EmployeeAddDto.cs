@@ -1,29 +1,20 @@
-﻿using SiteManagement.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SiteManagement.Entity.Entities
+namespace SiteManagement.Entity.DTOs.Employees
 {
-    public class Employee : EntityBase
+    public class EmployeeAddDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
         public string PhoneNumber { get; set; }
-
         public string JobTitle { get; set; }
         public decimal Salary { get; set; }
         public DateTime HireDate { get; set; }
-        public DateTime? TerminationDate { get; set; }
-        public bool IsActive { get; set; } = true;
         public Guid SiteId { get; set; }
-        public Guid? UserId { get; set; }
-
-
-        public Site Site { get; set; }
-        public AppUser? User { get; set; }
+        public Guid? UserId { get; set; } 
     }
 }

@@ -25,6 +25,7 @@
 
     <meta name="description" content="" />
 
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="~/sneat/assets/img/favicon/favicon.ico" />
 
@@ -37,6 +38,7 @@
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet" href="~/sneat/assets/vendor/fonts/boxicons.css" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="~/sneat/assets/vendor/css/core.css" class="template-customizer-core-css" />
@@ -169,13 +171,18 @@
                             <div data-i18n="Analytics">Aidat Yönetimi</div>
                         </a>
                     </li>
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">DUYURULAR</span></li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">DUYURU VE ŞİKAYET</span></li>
 
-                    </li>
                     <li class="menu-item ">
                         <a asp-area="Admin" asp-controller="Announcement" asp-action="Index" class="menu-link">
                             <i class="menu-icon bx bxs-megaphone"></i>
                             <div data-i18n="Analytics">Duyuru Yönetimi</div>
+                        </a>
+                    </li>
+                    <li class="menu-item ">
+                        <a asp-area="Admin" asp-controller="Complaint" asp-action="Index" class="menu-link">
+                            <i class="menu-icon bx bx-alarm"></i>
+                            <div data-i18n="Analytics">Şikayet Yönetimi</div>
                         </a>
                     </li>
 

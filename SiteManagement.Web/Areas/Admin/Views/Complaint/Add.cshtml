@@ -1,0 +1,18 @@
+﻿@model SiteManagement.Entity.DTOs.Complaints.ComplaintAddDto
+
+<form asp-action="Add" asp-controller="Complaint" asp-area="Admin" onsubmit="return jQueryAjaxPost(this);" autocomplete="off">
+    <div class="row">
+        <div class="col-mb-3 mb-3">
+            <label asp-for="Title" class="form-label">Başlık</label>
+            <input asp-for="Title" class="form-control" required />
+        </div>
+        <div class="col-mb-3 mb-3">
+            <label asp-for="Description" class="form-label">Açıklama / İçerik</label>
+            <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+        </div>
+    </div>
+    <div class="modal-footer px-0 pb-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>

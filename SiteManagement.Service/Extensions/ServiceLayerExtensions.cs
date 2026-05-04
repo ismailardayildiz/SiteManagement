@@ -29,7 +29,8 @@ namespace SiteManagement.Service.Extensions
             services.AddScoped<IApartmentService, ApartmentService>();
             services.AddScoped<IDueService, DueService>();
             services.AddScoped<IPaymentService, PaymentService>();
-
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IComplaintService, ComplaintService>();
 
 
             services.AddAutoMapper(assembly);
